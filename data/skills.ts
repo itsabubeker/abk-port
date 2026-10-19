@@ -2,11 +2,11 @@ import { SkillCategory } from "@/types";
 export const SkillCategories: SkillCategory[] = [
   {
     title: "Frontend",
-    skillSlugs: ["javascript", "typescript", "react", "nextjs", "tailwind"],
+    skillSlugs: ["typescript", "react", "nextjs", "wxt", "tailwind"],
   },
   {
     title: "Backend",
-    skillSlugs: ["nestjs", "nodejs", "expressjs", "python", "flask"],
+    skillSlugs: ["nestjs", "expressjs", "flask"],
   },
   {
     title: "Database & Tools",
@@ -116,6 +116,11 @@ export const skills = [
     name: "Framer Motion",
     img: "/assets/icons/framer.svg",
     invertDark: true,
+  },
+  {
+    slug: "wxt",
+    name: "WXT",
+    img: "/assets/icons/wxt.svg",
   },
 ];
 export function getSkillBySlug(slug: string) {
