@@ -48,7 +48,7 @@ const Hero = () => {
               Hi, I&apos;m <span className="text-primary">Abubeker</span>
             </h1>
             <p className="mb-12 text-lg text-muted-foreground md:text-xl text-balance relative max-w-3xl">
-              I'm a full-stack{" "}
+              I'm a Full-stack{" "}
               <Highlighter
                 action="highlight"
                 color="#007acc"
@@ -56,17 +56,9 @@ const Hero = () => {
               >
                 <span className="text-white">TypeScript </span>
               </Highlighter>{" "}
-              developer and{" "}
-              <Highlighter
-                action="highlight"
-                color="#f02698"
-                animationDuration={1000}
-              >
-                <span className="text-white">AI automation </span>
-              </Highlighter>{" "}
-              expert. I build dashboards, internal tools, and automation
-              pipelines that hold up in production — not just in a demo. I like
-              clean code and workflows that don't make people think too hard.
+              developer. I build dashboards, internal tools, and automation
+              pipelines that hold up in production . I like clean code and
+              workflows that don't make people think too hard.
             </p>
 
             <div className="flex items-center justify-center whitespace-nowrap gap-4 z-50">
@@ -86,7 +78,7 @@ const Hero = () => {
             </div>
 
             <a
-              href="https://www.resume.lol/share/bg03w6u"
+              href="/assets/files/abubeker-abduljelil-resume.pdf"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 mt-6 text-sm text-muted-foreground hover:text-primary transition-colors underline-offset-4 hover:underline"
