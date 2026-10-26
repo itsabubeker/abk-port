@@ -3,7 +3,7 @@ import { SocialLink } from "@/types";
 export const SOCIAL_LINKS: SocialLink[] = [
   {
     platform: "GitHub",
-    url: "https://github.com/corax58",
+    url: "https://github.com/itsabubeker",
     icon: "/assets/icons/socialIcons/github.svg",
   },
   {
@@ -18,7 +18,7 @@ export const SOCIAL_LINKS: SocialLink[] = [
   },
   {
     platform: "Telegram",
-    url: "https://t.me/Ccoraxx",
+    url: "https://t.me/itsabubeker",
     icon: "/assets/icons/socialIcons/telegram.svg",
   },
 ];
