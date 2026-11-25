@@ -9,52 +9,42 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { sendMainAction } from "@/action/sendMailAction";
-
-const initialData: ContactData = {
-  full_name: "",
-  email: "",
-  country: "",
-  company: "",
-  subject: "",
-  description: "",
-};
+import {
+  CONTACT_LIMITS,
+  type ContactData,
+  EMPTY_CONTACT,
+  normalizeContactData,
+  validateContactData,
+} from "@/lib/contact";
+import { SITE } from "@/lib/site";
 
 const StyledAstrix = () => <span className="text-sky-400">*</span>;
-
-export interface ContactData {
-  full_name: string;
-  email: string;
-  country: string;
-  company: string;
-  subject: string;
-  description: string;
-}
 
 interface ContactMeFormProps {
   className?: string;
 }
 const ContactMeForm = ({ className }: ContactMeFormProps) => {
-  const [formData, setFormData] = useState<ContactData>(initialData);
+  const [formData, setFormData] = useState<ContactData>(EMPTY_CONTACT);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const sendContactData = async (contactData: ContactData) => {
     setIsLoading(true);
 
     try {
-      await sendMainAction(contactData);
-      setFormData(initialData);
+      const result = await sendMainAction(contactData);
+      if (!result.success) {
+        // Keep what they typed so they can retry or copy it elsewhere.
+        toast.error("Message not sent", { description: result.error });
+        return;
+      }
+      setFormData(EMPTY_CONTACT);
       toast.success("Message sent successfully!");
     } catch (err: unknown) {
+      // Network failure or server crash before the action could respond.
       console.error(err);
-      if (err instanceof Error) {
-        //use toast to show error
-        toast.error("Error", { description: err.message });
-      } else {
-        //use toast to show error
-        toast.error("Error", {
-          description: "An unexpected error occurred. Please try again.",
-        });
-      }
+      toast.error("Message not sent", {
+        description: `Something went wrong. Please try again or email me at ${SITE.author.email}.`,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -73,28 +63,13 @@ const ContactMeForm = ({ className }: ContactMeFormProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const trimmedData: ContactData = {
-      ...formData,
-      full_name: formData.full_name.trim(),
-      email: formData.email.trim(),
-      country: formData.country.trim(),
-      subject: formData.subject.trim(),
-      description: formData.description.trim(),
-    };
-
-    if (
-      !trimmedData.full_name ||
-      !trimmedData.email ||
-      !trimmedData.country ||
-      !trimmedData.subject ||
-      !trimmedData.description
-    ) {
-      //use toast to show error
-      console.error("Please fill all required fields");
-      toast.error("Please fill all required fields");
+    const data = normalizeContactData(formData);
+    const validationError = validateContactData(data);
+    if (validationError) {
+      toast.error(validationError);
       return;
     }
-    await sendContactData(trimmedData);
+    await sendContactData(data);
   };
 
   return (
@@ -116,6 +91,8 @@ const ContactMeForm = ({ className }: ContactMeFormProps) => {
               placeholder="Eg, john doe"
               value={formData.full_name}
               required
+              maxLength={CONTACT_LIMITS.full_name}
+              autoComplete="name"
               name="full_name"
               onChange={handleChange}
             />
@@ -129,6 +106,8 @@ const ContactMeForm = ({ className }: ContactMeFormProps) => {
               type="email"
               placeholder="Example@email.com"
               required
+              maxLength={CONTACT_LIMITS.email}
+              autoComplete="email"
               value={formData.email}
               name="email"
               onChange={handleChange}
@@ -145,21 +124,25 @@ const ContactMeForm = ({ className }: ContactMeFormProps) => {
             value={formData.country}
             name="country"
             required
+            maxLength={CONTACT_LIMITS.country}
+            autoComplete="country-name"
             onChange={handleChange}
           />
         </div>
-        <div className="hidden  tab-1 flex-col gap-3">
-          <label className="text-sm font-medium ">
-            Company <StyledAstrix />
+        {/* Honeypot: invisible to people and screen readers. autoComplete is
+            off so browser autofill can't fill it and get a real visitor's
+            message silently discarded as spam. */}
+        <div className="hidden" aria-hidden="true">
+          <label>
+            Company
+            <Input
+              value={formData.company}
+              tabIndex={-1}
+              autoComplete="off"
+              name="company"
+              onChange={handleChange}
+            />
           </label>
-          <Input
-            className={cn("w-full rounded-xs")}
-            placeholder="Eg, United kingdom"
-            value={formData.company}
-            tabIndex={-1}
-            name="company"
-            onChange={handleChange}
-          />
         </div>
         <div className="flex flex-col gap-3">
           <label className="text-sm font-medium ">
@@ -171,6 +154,7 @@ const ContactMeForm = ({ className }: ContactMeFormProps) => {
             placeholder="Please specify your subject"
             value={formData.subject}
             required
+            maxLength={CONTACT_LIMITS.subject}
             name="subject"
             onChange={handleChange}
           />
@@ -184,6 +168,7 @@ const ContactMeForm = ({ className }: ContactMeFormProps) => {
             placeholder="Write your questions in detail to support your Subject..."
             value={formData.description}
             required
+            maxLength={CONTACT_LIMITS.description}
             name="description"
             onChange={handleChange}
           />
